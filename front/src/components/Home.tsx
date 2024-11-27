@@ -1,7 +1,7 @@
 function Home(){
     return(
         <div>
-            <p> :D </p>
+            <p> fe </p>
         </div>
     )
 }

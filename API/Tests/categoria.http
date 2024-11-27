@@ -3,8 +3,8 @@ GET http://localhost:5000/api/categoria/listar
 
 ### Cadastrar uma categoria
 POST http://localhost:5000/api/categoria/cadastrar
-# Content-Type: application/json
+Content-Type: application/json
 
-# {
-#     "nome": "Pessoal"
-# }
+{
+    "nome": "Pessoal"
+}

@@ -5,11 +5,10 @@ const Tarefas: React.FC = () => {
   const [tarefas, setTarefas] = useState<TarefasForm[]>([]);
   const [titulo, setTitulo] = useState<string>("");
   const [descricao, setDescricao] = useState<string>("");
-  const [CategoriaId, setCategoriaId] = useState<number>(0);  
+  const [CategoriaId, setCategoriaId] = useState<string>("");  
   const [Status, setStatus] = useState<string>("");
   const [editandoId, setEditandoId] = useState<number | null>(null);
 
-  const apiBaseUrl = "http://localhost:5000/api/tarefas";
 
   useEffect(() => {
     carregarTarefas();
@@ -17,7 +16,19 @@ const Tarefas: React.FC = () => {
 
   const carregarTarefas = async () => {
     try {
-      const response = await axios.get<TarefasForm[]>(`${apiBaseUrl}/listar`);
+      const response = await axios.get<TarefasForm[]>("http://localhost:3000/api/tarefas/listar");
+      setTarefas(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar tarefas:", error);
+    }
+    try {
+      const response = await axios.get<TarefasForm[]>("http://localhost:3000/api/tarefas/naoconcluidas");
+      setTarefas(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar tarefas:", error);
+    }
+    try {
+      const response = await axios.get<TarefasForm[]>("http://localhost:5000/api/tarefas/concluidas");
       setTarefas(response.data);
     } catch (error) {
       console.error("Erro ao carregar tarefas:", error);
@@ -28,15 +39,15 @@ const Tarefas: React.FC = () => {
     e.preventDefault();
     try {
       if (editandoId !== null) {
-        await axios.put(`${apiBaseUrl}/alterar/${editandoId}`, { titulo, descricao, CategoriaId, Status });
+        await axios.put(`http://localhost:5000/api/tarefas/alterar/${editandoId}`, { titulo, descricao, CategoriaId, Status });
       } else {
-        await axios.post(`${apiBaseUrl}/cadastrar`, { titulo, descricao, CategoriaId, Status });
+        await axios.post("http://localhost:5000/api/tarefas/cadastra", { titulo, descricao, CategoriaId, Status });
       }
 
       carregarTarefas();
       setTitulo("");
       setDescricao("");
-      setCategoriaId(0);
+      setCategoriaId("");
       setStatus("");
       setEditandoId(null);
     } catch (error) {
@@ -86,9 +97,9 @@ const Tarefas: React.FC = () => {
           <label>
             CategoriaId:
             <input
-              type="number"
+              type="text"
               value={CategoriaId}
-              onChange={(e) => setCategoriaId(Number(e.target.value))}
+              onChange={(e) => setCategoriaId((e.target.value))}
               required
             />
           </label>

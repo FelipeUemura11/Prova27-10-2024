@@ -2,6 +2,6 @@ interface TarefasForm {
     id: number;
     titulo: string;
     descricao: string;
-    CategoriaId: number;
+    CategoriaId: string;
     Status: string;
 }

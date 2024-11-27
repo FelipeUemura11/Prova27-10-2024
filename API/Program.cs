@@ -71,22 +71,27 @@ app.MapPost("/api/tarefas/cadastrar", ([FromServices] AppDataContext ctx, [FromB
 });
 
 //PUT: http://localhost:5273/tarefas/alterar/{id}
-app.MapPut("/api/tarefas/alterar/{id}", async ([FromServices] AppDataContext ctx, [FromRoute] int id, [FromBody] Tarefa tarefa_atualizada) =>
-{
+app.MapPut("/api/tarefas/alterar/{id}", ([FromServices] AppDataContext ctx, [FromRoute] int id, [FromBody] Tarefa tarefa_atualizada) =>
+{   
 
-    var tarefa_existente = await ctx.Tarefas.FindAsync(id);
+    Tarefa? tarefa_existente = ctx.Tarefas.Find(id);
 
     if (tarefa_existente == null)
     {
         return Results.NotFound($"Tarefa com ID {id} não encontrada.");
+    }
+    Categoria? categoria = ctx.Categorias.Find(tarefa_existente.CategoriaId);
+    if (categoria is null)
+    {
+        return Results.NotFound();
     }
 
     tarefa_existente.Titulo = tarefa_atualizada.Titulo;
     tarefa_existente.Descricao = tarefa_atualizada.Descricao;
     tarefa_existente.CategoriaId = tarefa_atualizada.CategoriaId;
     tarefa_existente.Status = tarefa_atualizada.Status;
-
-    await ctx.SaveChangesAsync();
+    ctx.Tarefas.Update(tarefa_existente);
+    ctx.SaveChanges();
 
     return Results.Ok("Cliente atualizado com sucesso.");   
 });
